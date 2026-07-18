@@ -1,0 +1,6 @@
+*.jar
+.vscode
+/bin
+.exe
+.rar
+.zip
