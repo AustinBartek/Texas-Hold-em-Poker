@@ -1,6 +1,8 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Window {
@@ -13,13 +15,25 @@ public class Window {
     JButton newGameButton = new JButton("New Game");
     ArrayList<String> message = new ArrayList<String>();
     Boolean gameOver;
+    public static BufferedImage BACK_IMAGE;
+    public static HashMap<String, BufferedImage> CARD_IMAGES;
+
+    public static void init() {
+        CARD_IMAGES = new HashMap<>();
+        for (String value : new String[] { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" }) {
+            for (String suit : new String[] { "C", "D", "H", "S" }) {
+                CARD_IMAGES.put(value + suit, loadImage("res/Cards/" + value + suit + ".png"));
+            }
+        }
+        BACK_IMAGE = loadImage("res/Cards/BACK.png");
+    }
 
     public Window() {
         message.add("Welcome!");
         gameOver = false;
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setIconImage(new ImageIcon("src/Cards/AD.png").getImage());
+        window.setIconImage(new ImageIcon("res/Cards/AD.png").getImage());
         window.setResizable(false);
         window.setSize(1000, 800);
         window.setLocationRelativeTo(null);
@@ -43,7 +57,7 @@ public class Window {
                     Image img = new ImageIcon().getImage();
                     try {
                         img = (gameOver) ? Poker.cpuHand.get(i).getImage()
-                                : new ImageIcon("src/Cards/BACK.png").getImage();
+                                : BACK_IMAGE;
                     } catch (IOException e) {
                     }
                     g.drawImage(img, xPos, 10, 140, 203, null);
@@ -52,21 +66,21 @@ public class Window {
                     int xPos = i * 160 + 20;
                     Image img = new ImageIcon().getImage();
                     try {
-                        img = (i > Poker.cardsRevealed - 1) ? new ImageIcon("src/Cards/BACK.png").getImage()
+                        img = (i > Poker.cardsRevealed - 1) ? BACK_IMAGE
                                 : Poker.pool.get(i).getImage();
                     } catch (IOException e) {
                     }
                     g.drawImage(img, xPos, 260, 140, 203, null);
                 }
 
-                //textbox
+                // textbox
                 g.setColor(new Color(200, 200, 200));
                 g.fill3DRect(350, 505, 470, 200, true);
-                //betboxes
+                // betboxes
                 g.setColor(new Color(200, 150, 150));
                 g.fill3DRect(850, 15, 100, 100, true);
                 g.fill3DRect(850, 600, 100, 100, true);
-                //strings
+                // strings
                 g.setFont(new Font("Verdana", Font.PLAIN, 15));
                 g.setColor(Color.black);
                 for (int i = 0; i < message.size(); i++) {
@@ -97,5 +111,14 @@ public class Window {
     public void updateMessage(String text) {
         message.add(text);
         gamePanel.repaint();
+    }
+
+    public static BufferedImage loadImage(String src) {
+        try {
+            return ImageIO.read(Window.class.getResourceAsStream(src));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

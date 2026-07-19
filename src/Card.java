@@ -28,11 +28,8 @@ public class Card {
                 break;
         }
     }
-    
-
-
 
     public Image getImage() throws IOException {
-        return new ImageIcon("src/Cards/" + this.value + this.suit + ".png").getImage();
+        return Window.CARD_IMAGES.get(this.value + this.suit);
     }
 }

@@ -1,6 +1,6 @@
 *.jar
 .vscode
 /bin
-.exe
-.rar
-.zip
+*.exe
+*.rar
+*.zip

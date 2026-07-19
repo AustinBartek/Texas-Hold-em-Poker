@@ -13,6 +13,8 @@ public class Poker {
     static Window window;
 
     public static void main(String[] args) throws Exception {
+        Window.init();
+
         newGame();
         window = new Window();
         initializeWindowEvents();
@@ -41,7 +43,7 @@ public class Poker {
             public void actionPerformed(ActionEvent e) {
                 String[] randomMessages = { "Ahh... we start anew", "Here we go again!", "ANUTHAH WAAAAN!!",
                         "You want to keep losing, eh?", "Woohoo! Again! Again!",
-                        "We've played " + roundsPlayed + " round" + ((roundsPlayed == 1) ? "" : "s") + ", dude!"};
+                        "We've played " + roundsPlayed + " round" + ((roundsPlayed == 1) ? "" : "s") + ", dude!" };
                 newGame();
                 window.gameOver = false;
                 window.message.clear();
@@ -63,19 +65,26 @@ public class Poker {
         cardsRevealed = 5;
         int outcome = logic.compareHands();
         int pot = playerBet + cpuBet;
-        playerScore += (playerFold) ? 0 : (outcome == 1) ? cpuBet : (outcome == 0) ? Math.ceil((cpuBet + playerBet) / 2.0) : 0;
-        cpuScore += (playerFold) ? playerBet : (outcome == -1) ? playerBet : (outcome == 0) ? Math.floor((playerBet + cpuBet) / 2.0) : 0;
+        playerScore += (playerFold) ? 0
+                : (outcome == 1) ? cpuBet : (outcome == 0) ? Math.ceil((cpuBet + playerBet) / 2.0) : 0;
+        cpuScore += (playerFold) ? playerBet
+                : (outcome == -1) ? playerBet : (outcome == 0) ? Math.floor((playerBet + cpuBet) / 2.0) : 0;
         double playerAverage = Math.round(((double) (playerScore - cpuScore) * 100.0 / roundsPlayed)) / 100.0;
         window.message.clear();
 
-        window.updateMessage("You " + ((playerFold) ? "would've " : "") + ((outcome == 1) ? "won" : (outcome == 0) ? "tied" : "lost") + " with a " + getHandType(logic.getMaxCombo(playerHand)) + ".");
+        window.updateMessage(
+                "You " + ((playerFold) ? "would've " : "") + ((outcome == 1) ? "won" : (outcome == 0) ? "tied" : "lost")
+                        + " with a " + getHandType(logic.getMaxCombo(playerHand)) + ".");
         window.updateMessage("The CPU had a " + getHandType(logic.getMaxCombo(cpuHand)) + ".");
         window.updateMessage("You bet " + playerBet + " chips and the CPU bet " + cpuBet + " chips.");
-        window.updateMessage("" + ((playerFold) ? "You folded and gained no chips." : ("You " + ((outcome == 1) ? "gained " + cpuBet + " chips." : (outcome == 0) ? "split " + pot + " chips with the CPU." : "gained no chips."))));
+        window.updateMessage("" + ((playerFold) ? "You folded and gained no chips."
+                : ("You " + ((outcome == 1) ? "gained " + cpuBet + " chips."
+                        : (outcome == 0) ? "split " + pot + " chips with the CPU." : "gained no chips."))));
         window.updateMessage("Your total number of chips won is: " + playerScore);
         window.updateMessage("The CPU's total number of chips won is: " + cpuScore);
-        window.updateMessage("You average " + playerAverage + " chip" + ((Math.abs(playerAverage) == 1) ? "" : "s") + " per round (" + roundsPlayed + " round" + ((roundsPlayed > 1) ? "s" : "") + " total).");
-        
+        window.updateMessage("You average " + playerAverage + " chip" + ((Math.abs(playerAverage) == 1) ? "" : "s")
+                + " per round (" + roundsPlayed + " round" + ((roundsPlayed > 1) ? "s" : "") + " total).");
+
         window.gameOver = true;
         window.gamePanel.repaint();
     }
@@ -136,15 +145,17 @@ public class Poker {
         for (int i = 0; i < 5; i++) {
             pool.add(deck.contents.remove(0));
         }
-        /*String[] expValues = { "2", "A", "A", "5", "7", "10", "8", "J", "A" };
-        char[] expSuits = { 'S', 'D', 'H', 'C', 'C', 'C', 'C', 'D', 'C' };
-        for (int i = 0; i < 2; i++) {
-            playerHand.add(new Card(expValues[i], expSuits[i]));
-            cpuHand.add(new Card(expValues[i + 2], expSuits[i + 2]));
-        }
-        for (int i = 4; i < 9; i++) {
-            pool.add(new Card(expValues[i], expSuits[i]));
-        }*/
+        /*
+         * String[] expValues = { "2", "A", "A", "5", "7", "10", "8", "J", "A" };
+         * char[] expSuits = { 'S', 'D', 'H', 'C', 'C', 'C', 'C', 'D', 'C' };
+         * for (int i = 0; i < 2; i++) {
+         * playerHand.add(new Card(expValues[i], expSuits[i]));
+         * cpuHand.add(new Card(expValues[i + 2], expSuits[i + 2]));
+         * }
+         * for (int i = 4; i < 9; i++) {
+         * pool.add(new Card(expValues[i], expSuits[i]));
+         * }
+         */
         logic = new Scorer(playerHand, cpuHand, pool);
         getCpuBet();
         roundsPlayed++;
